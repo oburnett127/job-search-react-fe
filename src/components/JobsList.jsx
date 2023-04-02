@@ -6,13 +6,15 @@ import classes from './JobsList.module.css';
 function JobsList({jobs}) {
 
     console.log(jobs);
+    console.log(typeof jobs);
 
+    if (jobs && jobs.length > 0) {
         return (
 
             <div className={classes.jobs}>
                 <h1>All Jobs</h1>
                 <ul className={classes.list}>
-                    {jobs.map((job) => (
+                    {jobs?.map((job) => (
                         <li key={uuidv4()} className={classes.item}>
                             <Link to={{ pathname: `/jobs/${job.id}` }}>
                                 <div className={classes.content}>
@@ -28,6 +30,9 @@ function JobsList({jobs}) {
             </div>
 
         )
+      } else {
+        console.log("jobs is null or undefined, hello from react");
+      }
 }
 
 export default JobsList;

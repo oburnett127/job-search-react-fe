@@ -10,6 +10,8 @@ function JobsPage() {
 
   const jobs = isLoadingJobs ? [] : jobsData;
 
+  console.log(jobs);
+
   return (
       <>
         {isLoadingJobs && <p>Loading...</p>}
