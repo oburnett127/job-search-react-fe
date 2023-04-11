@@ -14,6 +14,8 @@ function AuthForm() {
     const [isLogin, setIsLogin] = useState('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isEmployer, setIsEmployer] = useState(false);
+    const [message, setMessage] = useState('');
 
     useEffect((e) => {
         e?.preventDefault();
@@ -26,14 +28,12 @@ function AuthForm() {
     const { pathname, searchParams } = location;
 
     const handleSubmit = async () => {
-        console.log("test line 1");
 
         const authData = {
             email: email,
-            password: password
+            password: password,
+            isEmployer: isEmployer
         };
-
-        console.log("test line 2");
 
         let url;
 
@@ -53,22 +53,19 @@ function AuthForm() {
         }
 
         if (!response.ok) {
+            setMessage('Log in or registration failed');
             throw json({ message: 'Could not authenticate user.' }, { status: 500 });
         }
 
-        console.log("test line 3");
-
         const resData = await response.json();
         const token = resData.token;
-
-        console.log("test line 4");
 
         localStorage.setItem('token', token);
         const expiration = new Date();
         expiration.setHours(expiration.getHours() + 1);
         localStorage.setItem('expiration', expiration.toISOString());
 
-        console.log("test line 5");
+        setMessage('Log in or sign up was successful');
 
         return redirect('/');
     };
@@ -82,14 +79,25 @@ function AuthForm() {
     }
 
     const handleToggleMode = () => {
-        if(isLogin==='login') setIsLogin('setup');
+        if(isLogin==='login') setIsLogin('signup');
         else setIsLogin('login');
+    }
+
+    const handleUserSelect = () => {
+        setIsEmployer(false);
+        console.log('role is: JOB SEEKER')
+    }
+
+    const handleEmployerSelect = () => {
+        setIsEmployer(true);
+        console.log('role is: EMPLOYER')
     }
   
     return (
         <>
             <Form className={classes.form}>
                 <h1>{isLogin === 'login' ? 'Log in' : 'Create a new user'}</h1>
+                <p>{message}</p>
                 {data && data['errors'] && (
                     <ul>
                         {Object.values(data['errors']).map((err) => (
@@ -108,12 +116,20 @@ function AuthForm() {
                 </p>
                 <div className={classes.actions}>
                     <Link to={'/auth'} onClick={handleToggleMode}>
-                        {isLogin==='login' ? 'Create new user' : 'Login'}
+                        {isLogin === 'login' ? 'Create new user' : 'Login'}
                     </Link>
                     <button disabled={isSubmitting} onClick={handleSubmit}>
                         {isSubmitting ? 'Submitting...' : 'Submit'}
                     </button>
                 </div>
+                {isLogin === 'signup' && (
+                    <div>
+                        <label htmlFor="user">Job Seeker</label>
+                        <input type="radio" id="user" name="usertype" value="user" onClick={handleUserSelect}/><br />
+                        <label htmlFor="employer">Employer</label>
+                        <input type="radio" id="employer" name="usertype" value="employer" onClick={handleEmployerSelect}/>
+                    </div>
+                )}
             </Form>
         </>
     );
