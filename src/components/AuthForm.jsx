@@ -48,13 +48,18 @@ function AuthForm() {
             body: JSON.stringify(authData),
         });
 
-        if (response.status === 422 || response.status === 401) {
-            return response;
-        }
+        try {
+            if (isLogin !== 'login' && response.status === 409) {
+                setMessage('The email address you entered is already taken. Please enter a different email.');
+                throw json({ message: 'The email address you entered is already taken. Please enter a different email.'}, {status: 409});
+            }
 
-        if (!response.ok) {
-            setMessage('Log in or registration failed');
-            throw json({ message: 'Could not authenticate user.' }, { status: 500 });
+            if (!response.ok) {
+                setMessage('Log in or registration failed');
+                throw json({ message: 'Could not authenticate user.' }, { status: 500 });
+            }
+        } catch(err) {
+            return;
         }
 
         const resData = await response.json();
