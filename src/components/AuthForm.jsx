@@ -88,14 +88,17 @@ function AuthForm() {
         else setIsLogin('login');
     }
 
-    const handleUserSelect = () => {
+    const handleUserRole = () => {
         setIsEmployer(false);
-        console.log('role is: JOB SEEKER')
+        //console.log('role is: JOB SEEKER')
+    }
+
+    const handleEmployerRole = () => {
+        setIsEmployer(true);
+        //console.log('role is: EMPLOYER')
     }
 
     const handleEmployerSelect = () => {
-        setIsEmployer(true);
-        console.log('role is: EMPLOYER')
     }
   
     return (
@@ -130,9 +133,18 @@ function AuthForm() {
                 {isLogin === 'signup' && (
                     <div>
                         <label htmlFor="user">Job Seeker</label>
-                        <input type="radio" id="user" name="usertype" value="user" onClick={handleUserSelect}/><br />
+                        <input type="radio" id="user" name="usertype" value="user" onClick={handleUserRole}/><br />
                         <label htmlFor="employer">Employer</label>
-                        <input type="radio" id="employer" name="usertype" value="employer" onClick={handleEmployerSelect}/>
+                        <input type="radio" id="employer" name="usertype" value="employer" onClick={handleEmployerRole}/>
+                    </div>
+                )}
+                {isEmployer === true && (
+                    <div>
+                        <label htmlFor="employerSelect">Select Employer Name</label>
+                        <select name="employerSelect" id="employerSelect">
+                            <option value="Jills Bakery">Jills Bakery</option>
+                            <option value="City Bank">City Bank</option>
+                        </select>
                     </div>
                 )}
             </Form>

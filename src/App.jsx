@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useMemo} from 'react';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } from 'react-router-dom';
 import UpdateJobPage from './pages/UpdateJob';
 import ErrorPage from './pages/Error';
@@ -10,8 +10,20 @@ import NewJobPage from './pages/NewJob';
 import RootLayout from './pages/Root';
 import DeleteJobPage from './pages/DeleteJob';
 import AuthenticationPage from './pages/Authentication';
+import { createContext } from 'react';
+
+const UserContext = createContext({
+    userEmail: '',
+    setUserEmail: () => {},
+});
 
 function App() {
+    const [userEmail, setUserEmail] = useState('');
+    const value = useMemo(
+        () => ({ userEmail, setUserEmail }), 
+        [userEmail]
+    );
+
     const router = createBrowserRouter(
         createRoutesFromElements(
             <Route path="/" element={<RootLayout />}>
@@ -31,9 +43,11 @@ function App() {
     );
 
     return (
-        <div className={"App"}>
-            <RouterProvider router={router} />
-        </div>
+        <UserContext.Provider value={userEmail}>
+            <div className={"App"}>
+                <RouterProvider router={router} />
+            </div>
+        </UserContext.Provider>
     );
 }
 

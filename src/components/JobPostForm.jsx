@@ -3,12 +3,13 @@ import { Form, useNavigate, useNavigation, useActionData, json, redirect } from 
 import { useMutation } from 'react-query';
 import axios from 'axios';
 import classes from './JobPostForm.module.css';
-import { useState } from "react";
+import { useState, useContext } from 'react';
 
 function JobPostForm({ method }) {
   const data = useActionData();
   const navigate = useNavigate();
   const navigation = useNavigation();
+  const { userEmail } = useContext(UserContext);
 
   const isSubmitting = navigation.state === 'submitting';
 
@@ -20,6 +21,9 @@ function JobPostForm({ method }) {
   const [description, setDescription] = useState('');
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
+
+  // const { data: employer } = useQuery('employerId',
+  //     () => { return axios.get(`http://localhost:8080/employer/get/${job.id}`)});
 
   const createJob = useMutation(
       (formData) => axios.post('http://localhost:8080/job/create', formData),
