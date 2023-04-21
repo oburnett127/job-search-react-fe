@@ -10,25 +10,15 @@ import NewJobPage from './pages/NewJob';
 import RootLayout from './pages/Root';
 import DeleteJobPage from './pages/DeleteJob';
 import AuthenticationPage from './pages/Authentication';
-import { createContext } from 'react';
-
-const UserContext = createContext({
-    userEmail: '',
-    setUserEmail: () => {},
-});
+import EmployerAddPage from './pages/EmployerAdd';
 
 function App() {
-    const [userEmail, setUserEmail] = useState('');
-    const value = useMemo(
-        () => ({ userEmail, setUserEmail }), 
-        [userEmail]
-    );
-
     const router = createBrowserRouter(
         createRoutesFromElements(
             <Route path="/" element={<RootLayout />}>
                 <Route index element={<HomePage />}></Route>
                 <Route path="/auth" element={<AuthenticationPage />}></Route>
+                <Route path="/employeradd" element={<EmployerAddPage />}></Route>
                 <Route path="/jobs" element={<JobsRootLayout />}>
                     <Route index element={<JobsPage />}></Route>
                     <Route path="/jobs/:id" id="job-detail">
@@ -43,11 +33,9 @@ function App() {
     );
 
     return (
-        <UserContext.Provider value={userEmail}>
-            <div className={"App"}>
-                <RouterProvider router={router} />
-            </div>
-        </UserContext.Provider>
+        <div className={"App"}>
+            <RouterProvider router={router} />
+        </div>
     );
 }
 

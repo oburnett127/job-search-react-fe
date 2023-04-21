@@ -4,18 +4,21 @@ import {
     useLocation,
     useActionData,
     useNavigation,
+    useNavigate,
+    json, 
+    redirect
   } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
-import { json, redirect } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
 import classes from './AuthForm.module.css';
+import { UserContext } from './UserContext';
   
 function AuthForm() {
-
+    const { email, setEmail } = useContext(UserContext);
     const [isLogin, setIsLogin] = useState('login');
-    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isEmployer, setIsEmployer] = useState(false);
     const [message, setMessage] = useState('');
+    const [employerName, setEmployerName] = useState('');
 
     useEffect((e) => {
         e?.preventDefault();
@@ -29,16 +32,28 @@ function AuthForm() {
 
     const handleSubmit = async () => {
 
-        const authData = {
+        let authData = {
             email: email,
             password: password,
             isEmployer: isEmployer
         };
 
-        let url;
+        let url = '';
 
-        if(isLogin ==='login') url = 'http://localhost:8080/auth/login';
-        else url = 'http://localhost:8080/auth/signup';
+        if(isLogin === 'login') {
+            url = 'http://localhost:8080/auth/login';
+        } else {
+            url = 'http://localhost:8080/auth/signup';
+
+            if(isEmployer) {
+                authData = {
+                    email: email,
+                    password: password,
+                    isEmployer: isEmployer,
+                    employerName: employerName
+                };
+            }
+        }
 
         const response = await fetch(url, {
             method: 'POST',
@@ -98,8 +113,14 @@ function AuthForm() {
         //console.log('role is: EMPLOYER')
     }
 
-    const handleEmployerSelect = () => {
+    const handleEmployerSelect = (e) => {
+        setEmployerName(e.target.value)
     }
+
+    const handleEmpAdd = (e) => {
+        navigate('/employeradd');
+    }
+
   
     return (
         <>
@@ -116,7 +137,7 @@ function AuthForm() {
                 {data && data['message'] && <p>{data['message']}</p>}
                 <p>
                     <label htmlFor="email">Email</label>
-                    <input id="email" type="email" name="email" required onChange={handleEmailChanged} />
+                    <input id="email" type="email" name="email" value={email} required onChange={handleEmailChanged} />
                 </p>
                 <p>
                     <label htmlFor="password">Password</label>
@@ -141,10 +162,11 @@ function AuthForm() {
                 {isEmployer === true && (
                     <div>
                         <label htmlFor="employerSelect">Select Employer Name</label>
-                        <select name="employerSelect" id="employerSelect">
+                        <select name="employerSelect" id="employerSelect" onSelect={handleEmployerSelect}>
                             <option value="Jills Bakery">Jills Bakery</option>
                             <option value="City Bank">City Bank</option>
                         </select>
+                        <button name="empAdd" id="empAdd" onClick={handleEmpAdd}>Add My Company to Employer List</button>
                     </div>
                 )}
             </Form>

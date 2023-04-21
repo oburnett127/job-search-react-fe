@@ -1,9 +1,10 @@
 import React from 'react';
 import { Form, useNavigate, useNavigation, useActionData, json, redirect } from 'react-router-dom';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import axios from 'axios';
 import classes from './JobPostForm.module.css';
 import { useState, useContext } from 'react';
+import { UserContext } from './UserContext';
 
 function JobPostForm({ method }) {
   const data = useActionData();
@@ -13,17 +14,13 @@ function JobPostForm({ method }) {
 
   const isSubmitting = navigation.state === 'submitting';
 
-  function cancelHandler() {
-    navigate('..');
-  }
-
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
 
-  // const { data: employer } = useQuery('employerId',
-  //     () => { return axios.get(`http://localhost:8080/employer/get/${job.id}`)});
+  const { data: userAccount } = useQuery('userAccount',
+      () => { return axios.get(`http://localhost:8080/auth/get/${userEmail}`)});
 
   const createJob = useMutation(
       (formData) => axios.post('http://localhost:8080/job/create', formData),
@@ -40,10 +37,16 @@ function JobPostForm({ method }) {
       }
   );
 
+  const employerId = userAccount.employerId;
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    createJob.mutate({ title, description });
+    createJob.mutate({ employerId, title, description });
   };
+
+  function cancelHandler() {
+    navigate('..');
+  }
 
   return (
     <>
