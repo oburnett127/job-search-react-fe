@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { Form, useNavigate, useNavigation, useActionData, json, redirect } from 'react-router-dom';
 import { useMutation, useQuery } from 'react-query';
 import axios from 'axios';
 import classes from './JobPostForm.module.css';
-import { useState, useContext } from 'react';
 import { UserContext } from './UserContext';
 
 function JobPostForm({ method }) {

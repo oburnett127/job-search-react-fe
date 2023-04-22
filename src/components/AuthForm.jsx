@@ -1,16 +1,16 @@
 import {
     Form,
     Link,
-    useLocation,
     useActionData,
     useNavigation,
-    useNavigate,
     json, 
     redirect
   } from 'react-router-dom';
 import React, { useState, useEffect, useContext } from 'react';
 import classes from './AuthForm.module.css';
 import { UserContext } from './UserContext';
+import { useQuery } from 'react-query';
+import axios from 'axios';
   
 function AuthForm() {
     const { email, setEmail } = useContext(UserContext);
@@ -27,8 +27,15 @@ function AuthForm() {
     const data = useActionData();
     const navigation = useNavigation();
     const isSubmitting = navigation.state === 'submitting';
-    const location = useLocation();
-    const { pathname, searchParams } = location;
+
+    const { data: empList } = useQuery('employerList',
+      () => { return axios.get('http://localhost:8080/employer/list')});
+
+    const options = empList?.data?.map((employer) => (
+    <option key={employer.id} value={JSON.stringify(employer)}>
+        {employer.name}
+    </option>
+    ));
 
     const handleSubmit = async () => {
 
@@ -114,14 +121,13 @@ function AuthForm() {
     }
 
     const handleEmployerSelect = (e) => {
-        setEmployerName(e.target.value)
+        setEmployerName(e.target.value);
     }
 
-    const handleEmpAdd = (e) => {
-        navigate('/employeradd');
+    const handleName = (e) => {
+        setEmployerName(e.target.value);
     }
-
-  
+ 
     return (
         <>
             <Form className={classes.form}>
@@ -162,11 +168,13 @@ function AuthForm() {
                 {isEmployer === true && (
                     <div>
                         <label htmlFor="employerSelect">Select Employer Name</label>
-                        <select name="employerSelect" id="employerSelect" onSelect={handleEmployerSelect}>
-                            <option value="Jills Bakery">Jills Bakery</option>
-                            <option value="City Bank">City Bank</option>
-                        </select>
-                        <button name="empAdd" id="empAdd" onClick={handleEmpAdd}>Add My Company to Employer List</button>
+                        <select name="employerSelect" id="employerSelect" onSelect={handleEmployerSelect}>{options}</select>
+                        <p>If you do not see your company's name listed in the drop down list on the account creation/login page 
+                            you can type it in the box below to have it added to the list.</p>
+                        <div>
+                            Add company name:
+                            <input type="text" id="compName" name="compName" onChange={handleName} />
+                        </div>
                     </div>
                 )}
             </Form>
