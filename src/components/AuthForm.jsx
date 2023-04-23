@@ -1,19 +1,13 @@
-import {
-    Form,
-    Link,
-    useActionData,
-    useNavigation,
-    json, 
-    redirect
-  } from 'react-router-dom';
+import { Form, Link, useActionData, useNavigation, json, redirect } from 'react-router-dom';
 import React, { useState, useEffect, useContext } from 'react';
 import classes from './AuthForm.module.css';
-import { UserContext } from './UserContext';
 import { useQuery } from 'react-query';
 import axios from 'axios';
+import { UserContext } from './UserContext';
   
 function AuthForm() {
-    const { email, setEmail } = useContext(UserContext);
+    const { setEmail } = useContext(UserContext);
+    const [emailTemp, setEmailTemp] = useState('');
     const [isLogin, setIsLogin] = useState('login');
     const [password, setPassword] = useState('');
     const [isEmployer, setIsEmployer] = useState(false);
@@ -37,10 +31,10 @@ function AuthForm() {
     </option>
     ));
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
 
         let authData = {
-            email: email,
+            email: emailTemp,
             password: password,
             isEmployer: isEmployer
         };
@@ -54,7 +48,7 @@ function AuthForm() {
 
             if(isEmployer) {
                 authData = {
-                    email: email,
+                    email: emailTemp,
                     password: password,
                     isEmployer: isEmployer,
                     employerName: employerName
@@ -94,38 +88,14 @@ function AuthForm() {
 
         setMessage('Log in or sign up was successful');
 
+        setEmail(emailTemp);
+
         return redirect('/');
     };
-
-    const handleEmailChanged = (e) => {
-        setEmail(e.target.value);
-    }
-
-    const handlePasswordChanged = (e) => {
-        setPassword(e.target.value);
-    }
 
     const handleToggleMode = () => {
         if(isLogin==='login') setIsLogin('signup');
         else setIsLogin('login');
-    }
-
-    const handleUserRole = () => {
-        setIsEmployer(false);
-        //console.log('role is: JOB SEEKER')
-    }
-
-    const handleEmployerRole = () => {
-        setIsEmployer(true);
-        //console.log('role is: EMPLOYER')
-    }
-
-    const handleEmployerSelect = (e) => {
-        setEmployerName(e.target.value);
-    }
-
-    const handleName = (e) => {
-        setEmployerName(e.target.value);
     }
  
     return (
@@ -143,11 +113,11 @@ function AuthForm() {
                 {data && data['message'] && <p>{data['message']}</p>}
                 <p>
                     <label htmlFor="email">Email</label>
-                    <input id="email" type="email" name="email" value={email} required onChange={handleEmailChanged} />
+                    <input id="email" type="email" name="email" required onChange={(e) => setEmailTemp(e.target.value)} />
                 </p>
                 <p>
                     <label htmlFor="password">Password</label>
-                    <input id="password" type="password" name="password" required onChange={handlePasswordChanged} />
+                    <input id="password" type="password" name="password" required onChange={(e) => setPassword(e.target.value)} />
                 </p>
                 <div className={classes.actions}>
                     <Link to={'/auth'} onClick={handleToggleMode}>
@@ -160,20 +130,20 @@ function AuthForm() {
                 {isLogin === 'signup' && (
                     <div>
                         <label htmlFor="user">Job Seeker</label>
-                        <input type="radio" id="user" name="usertype" value="user" onClick={handleUserRole}/><br />
+                        <input type="radio" id="user" name="usertype" value="user" onClick={handleUserRole} /><br />
                         <label htmlFor="employer">Employer</label>
-                        <input type="radio" id="employer" name="usertype" value="employer" onClick={handleEmployerRole}/>
+                        <input type="radio" id="employer" name="usertype" value="employer" onClick={setIsEmployer(true)} />
                     </div>
                 )}
                 {isEmployer === true && (
                     <div>
                         <label htmlFor="employerSelect">Select Employer Name</label>
-                        <select name="employerSelect" id="employerSelect" onSelect={handleEmployerSelect}>{options}</select>
+                        <select name="employerSelect" id="employerSelect" onSelect={(e) => setEmployerName(e.target.value)}>{options}</select>
                         <p>If you do not see your company's name listed in the drop down list on the account creation/login page 
                             you can type it in the box below to have it added to the list.</p>
                         <div>
                             Add company name:
-                            <input type="text" id="compName" name="compName" onChange={handleName} />
+                            <input type="text" id="compName" name="compName" onChange={(e) => setEmployerName(e.target.value)} />
                         </div>
                     </div>
                 )}

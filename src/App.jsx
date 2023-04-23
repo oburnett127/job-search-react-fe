@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react';
+import React, { useState } from 'react';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } from 'react-router-dom';
 import UpdateJobPage from './pages/UpdateJob';
 import ErrorPage from './pages/Error';
@@ -10,8 +10,18 @@ import NewJobPage from './pages/NewJob';
 import RootLayout from './pages/Root';
 import DeleteJobPage from './pages/DeleteJob';
 import AuthenticationPage from './pages/Authentication';
+import { UserContext } from './components/UserContext';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 function App() {
+
+    const [email, setEmail] = useState("");
+
+    const updateEmail = (newEmail) => {
+        console.log("Updating email to:", newEmail);
+        setEmail(newEmail);
+    };
+
     const router = createBrowserRouter(
         createRoutesFromElements(
             <Route path="/" element={<RootLayout />}>
@@ -31,9 +41,13 @@ function App() {
     );
 
     return (
-        <div className={"App"}>
-            <RouterProvider router={router} />
-        </div>
+        <QueryClientProvider client={new QueryClient()}>
+            <UserContext.Provider value={{ email, setEmail: updateEmail }}>
+                <div className={"App"}>
+                    <RouterProvider router={router} />
+                </div>
+            </UserContext.Provider>
+        </QueryClientProvider>
     );
 }
 

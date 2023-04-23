@@ -9,9 +9,9 @@ function JobsPage() {
 
   console.log("jwt string: " + token);
 
-  const [page, setPage] = useState(1);
-
-  const { data: jobsData, isLoading: isLoadingJobs } = useQuery(['jobs', page],
+  //const [page, setPage] = useState(1);
+  //const { data: jobsData, isLoading: isLoadingJobs } = useQuery(['jobs', page],
+  const { data: jobsData, isLoading: isLoadingJobs } = useQuery('jobs',
       () => { return axios.get("http://localhost:8080/job/list", {
         headers: {
           'Authorization': 'Bearer ' + token
@@ -32,7 +32,7 @@ function JobsPage() {
           <>
             <JobsList jobs={jobs} />
 
-            <div className="nav btn-container">
+            {/* <div className="nav btn-container">
               <button
                 onClick={() => setPage((prevState) => Math.max(prevState - 1, 0))}
                 disabled={page === 1}
@@ -43,7 +43,7 @@ function JobsPage() {
               <button onClick={() => setPage((prevState) => prevState + 1)}>
                 Next Page
               </button>
-            </div>
+            </div> */}
           </>
         )}
       </>
