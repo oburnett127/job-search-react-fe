@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Form, useNavigate, useNavigation, useActionData } from 'react-router-dom';
-import { useQuery, QueryClient } from 'react-query';
 import axios from 'axios';
 import classes from './JobPostForm.module.css';
 import { UserContext } from './UserContext';
@@ -10,80 +9,112 @@ function JobPostForm({ method }) {
   const navigate = useNavigate();
   const navigation = useNavigation();
   const { email } = useContext(UserContext);
-  const queryClient = new QueryClient();
-
-  console.log(email);
-
   const isSubmitting = navigation.state === 'submitting';
+  const [formData, setFormData] = useState({ title: '', description: '' });
+  const [employer, setEmployer] = useState(null);
+  const [message, setMessage] = useState(null);
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [message, setMessage] = useState('');
-  const [success, setSuccess] = useState(false);
+  useEffect(() => {
+    console.log("user's email " + email);
 
-  const { data: employer } = useQuery('empId',
-      () => { return axios.get(`http://localhost:8080/auth/get/${email}`)},{ queryClient });
+    axios.get(`http://localhost:8080/auth/get/${email}`)
+      .then((response) => {
+        console.log("get employer response " + response?.data);
+        setEmployer(response?.data);
+      })
+      .catch((error => {
+        if(error.response) {
+          console.log(error.response);
+          setMessage('You must login before you can post a job.');
+        } else if(error.request) {
+          console.log("network error");
+        } else {
+          console.log(error);
+        }
+      }));
+  }, [email]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const id = employer.data.id;
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    console.log("inside handleSubmit: " + employer?.id);
 
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: title, employerId: id, description: description})
+      body: JSON.stringify({ title: formData.title, employerId: employer?.id, description: formData.description})
     };
   
-    fetch('http://localhost:8080/job/create', requestOptions);
-  };
+    fetch('http://localhost:8080/job/create', requestOptions)
+    .then((response) => {
+      console.log(response);
+      if(response.ok) {
+        setMessage('Your job was successfully created.');
+      }
+    })
+    .catch((error => {
+      if(error.response) {
+        console.log(error.response);
+        setMessage('An error occurred. Your job could not be created.');
+      } else if(error.request) {
+        console.log("network error");
+      } else {
+        console.log(error);
+      }
+    }));
+  }
 
-  function cancelHandler() {
+  const handleCancel = () => {
     navigate('..');
   }
 
   return (
     <>
       <p className={classes.message}>{message}</p>
-      {
-        !success &&
-        <Form method={method} className={classes.form}>
-          {data && data['errors'] && (
-            <ul>
-              {Object.values(data['errors'].map((err) => (
-                <li key={err}>{err}</li>
-              )))}
-            </ul>
-          )}
-          <p>
-            <label htmlFor="title">Title</label>
-            <input
-              id="title"
-              type="text"
-              name="title"
-              required
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </p>
-          <p>
-            <label htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              rows={5}
-              required
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </p>
-          <div className={classes.actions}>
-            <button type="button" onClick={cancelHandler} disabled={isSubmitting}>
-              Cancel
-            </button>
-            <button disabled={isSubmitting} onClick={handleSubmit}>
-              {isSubmitting ? 'Submitting...' : 'Save'}
-            </button>
-          </div>
-        </Form>
-      }
+      <Form method={method} className={classes.form}>
+        {data && data['errors'] && (
+          <ul>
+            {Object.values(data['errors'].map((err) => (
+              <li key={err}>{err}</li>
+            )))}
+          </ul>
+        )}
+        <p>
+          <label htmlFor="title">Title</label>
+          <input
+            id="title"
+            type="text"
+            name="title"
+            value={formData.title}
+            required
+            onChange={handleInputChange}
+          />
+        </p>
+        <p>
+          <label htmlFor="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            rows={5}
+            required
+            onChange={handleInputChange}
+          />
+        </p>
+        <div className={classes.actions}>
+          <button type="button" onClick={handleCancel} disabled={isSubmitting}>
+            Cancel
+          </button>
+          <button disabled={isSubmitting} onClick={handleSubmit}>
+            {isSubmitting ? 'Submitting...' : 'Save'}
+          </button>
+        </div>
+      </Form>
     </>
   );
 }
