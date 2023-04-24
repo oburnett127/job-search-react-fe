@@ -1,5 +1,5 @@
 import { Form, Link, useActionData, useNavigation, json, redirect } from 'react-router-dom';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import classes from './AuthForm.module.css';
 import { useQuery } from 'react-query';
 import axios from 'axios';
@@ -14,24 +14,21 @@ function AuthForm() {
     const [message, setMessage] = useState('');
     const [employerName, setEmployerName] = useState('');
 
-    useEffect((e) => {
-        e?.preventDefault();
-    }, []);
-
     const data = useActionData();
     const navigation = useNavigation();
     const isSubmitting = navigation.state === 'submitting';
 
     const { data: empList } = useQuery('employerList',
-      () => { return axios.get('http://localhost:8080/employer/list')});
+        () => { return axios.get('http://localhost:8080/employer/list')});
 
     const options = empList?.data?.map((employer) => (
-    <option key={employer.id} value={JSON.stringify(employer)}>
-        {employer.name}
-    </option>
+        <option key={employer.id} value={JSON.stringify(employer)}>
+            {employer.name}
+        </option>
     ));
 
     const handleSubmit = async (e) => {
+        e.preventDefault();
 
         let authData = {
             email: emailTemp,
@@ -94,7 +91,7 @@ function AuthForm() {
     };
 
     const handleToggleMode = () => {
-        if(isLogin==='login') setIsLogin('signup');
+        if(isLogin === 'login') setIsLogin('signup');
         else setIsLogin('login');
     }
  
@@ -130,16 +127,16 @@ function AuthForm() {
                 {isLogin === 'signup' && (
                     <div>
                         <label htmlFor="user">Job Seeker</label>
-                        <input type="radio" id="user" name="usertype" value="user" onClick={handleUserRole} /><br />
+                        <input type="radio" id="user" name="usertype" className="radio" value="user" onClick={() => setIsEmployer(false)} /><br />
                         <label htmlFor="employer">Employer</label>
-                        <input type="radio" id="employer" name="usertype" value="employer" onClick={setIsEmployer(true)} />
+                        <input type="radio" id="employer" name="usertype" className="radio" value="employer" onClick={() => setIsEmployer(true)} />
                     </div>
                 )}
                 {isEmployer === true && (
                     <div>
                         <label htmlFor="employerSelect">Select Employer Name</label>
-                        <select name="employerSelect" id="employerSelect" onSelect={(e) => setEmployerName(e.target.value)}>{options}</select>
-                        <p>If you do not see your company's name listed in the drop down list on the account creation/login page 
+                        <select name="employerSelect" id="employerSelect" onChange={(e) => setEmployerName(e.target.value)}>{options}</select>
+                        <p>If you do not see your company's name in the drop down list  
                             you can type it in the box below to have it added to the list.</p>
                         <div>
                             Add company name:
