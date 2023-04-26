@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } from 'react-router-dom';
+import ApplyJobPage from './pages/ApplyJob';
 import UpdateJobPage from './pages/UpdateJob';
 import ErrorPage from './pages/Error';
 import JobDetailPage from './pages/JobDetail';
@@ -31,6 +32,7 @@ function App() {
                     <Route index element={<JobsPage />}></Route>
                     <Route path="/jobs/:id" id="job-detail">
                         <Route index element={<JobDetailPage />}></Route>
+                        <Route path="/jobs/:id/apply" element={<ApplyJobPage />}></Route>
                         <Route path="/jobs/:id/edit" element={<UpdateJobPage />}></Route>
                         <Route path="/jobs/:id/delete" element={<DeleteJobPage />}></Route>
                     </Route>

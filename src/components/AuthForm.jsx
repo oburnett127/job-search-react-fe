@@ -6,7 +6,7 @@ import axios from 'axios';
 import { UserContext } from './UserContext';
   
 function AuthForm() {
-    const { setEmail } = useContext(UserContext);
+    const { email, setEmail, userId, setUserId } = useContext(UserContext);
     const [emailTemp, setEmailTemp] = useState('');
     const [isLogin, setIsLogin] = useState('login');
     const [password, setPassword] = useState('');
@@ -86,6 +86,25 @@ function AuthForm() {
         setMessage('Log in or sign up was successful');
 
         setEmail(emailTemp);
+
+        const userResp = await fetch(`http://localhost:8080/auth/getuserid/${emailTemp}`)
+        .then((response) => {
+            console.log(response);
+            return response.json();
+          })
+          .catch((error => {
+            if(error.response) {
+              console.log(error.response);
+            } else if(error.request) {
+              console.log("network error");
+            } else {
+              console.log(error);
+            }
+          }));
+
+        setUserId(userResp);
+
+        console.log("userId is: " + userResp);
 
         return redirect('/');
     };

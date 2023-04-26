@@ -8,7 +8,7 @@ function JobPostForm({ method }) {
   const data = useActionData();
   const navigate = useNavigate();
   const navigation = useNavigation();
-  const { email } = useContext(UserContext);
+  const { email, userId } = useContext(UserContext);
   const isSubmitting = navigation.state === 'submitting';
   const [formData, setFormData] = useState({ title: '', description: '' });
   const [employer, setEmployer] = useState(null);
@@ -17,7 +17,7 @@ function JobPostForm({ method }) {
   useEffect(() => {
     console.log("user's email " + email);
 
-    axios.get(`http://localhost:8080/auth/get/${email}`)
+    axios.get(`http://localhost:8080/auth/getemployer/${email}`)
       .then((response) => {
         console.log("get employer response " + response?.data);
         setEmployer(response?.data);
