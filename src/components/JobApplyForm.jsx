@@ -11,10 +11,13 @@ const JobApplyForm = ({ job }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        console.log(job);
+        console.log(job.id);
+
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: userId, jobId: job.jobId })
+            body: JSON.stringify({ userId: userId, jobId: job.id })
           };
 
         fetch('http://localhost:8080/job/apply', requestOptions)
@@ -44,7 +47,7 @@ const JobApplyForm = ({ job }) => {
     return (
         <form>
             <div>
-                {message}
+                {message}<br />
                 {job.title}
                 <p>Are you sure you want to apply for this job?</p>
             </div>

@@ -6,7 +6,7 @@ import axios from 'axios';
 import { UserContext } from './UserContext';
   
 function AuthForm() {
-    const { email, setEmail, userId, setUserId } = useContext(UserContext);
+    const { setEmail, setUserId } = useContext(UserContext);
     const [emailTemp, setEmailTemp] = useState('');
     const [isLogin, setIsLogin] = useState('login');
     const [password, setPassword] = useState('');
@@ -87,24 +87,20 @@ function AuthForm() {
 
         setEmail(emailTemp);
 
-        const userResp = await fetch(`http://localhost:8080/auth/getuserid/${emailTemp}`)
-        .then((response) => {
-            console.log(response);
-            return response.json();
-          })
-          .catch((error => {
-            if(error.response) {
+        try {
+            const response = await fetch(`http://localhost:8080/auth/getuserid/${emailTemp}`);
+            const userId = await response.json();
+            setUserId(userId);
+            console.log("userId is: " + userId);
+          } catch (error) {
+            if (error.response) {
               console.log(error.response);
-            } else if(error.request) {
+            } else if (error.request) {
               console.log("network error");
             } else {
               console.log(error);
             }
-          }));
-
-        setUserId(userResp);
-
-        console.log("userId is: " + userResp);
+          }
 
         return redirect('/');
     };
@@ -135,23 +131,17 @@ function AuthForm() {
                     <label htmlFor="password">Password</label>
                     <input id="password" type="password" name="password" required onChange={(e) => setPassword(e.target.value)} />
                 </p>
-                <div className={classes.actions}>
-                    <Link to={'/auth'} onClick={handleToggleMode}>
-                        {isLogin === 'login' ? 'Create new user' : 'Login'}
-                    </Link>
-                    <button disabled={isSubmitting} onClick={handleSubmit}>
-                        {isSubmitting ? 'Submitting...' : 'Submit'}
-                    </button>
-                </div>
                 {isLogin === 'signup' && (
-                    <div>
-                        <label htmlFor="user">Job Seeker</label>
-                        <input type="radio" id="user" name="usertype" className="radio" value="user" onClick={() => setIsEmployer(false)} /><br />
-                        <label htmlFor="employer">Employer</label>
-                        <input type="radio" id="employer" name="usertype" className="radio" value="employer" onClick={() => setIsEmployer(true)} />
-                    </div>
+                <div className="radio-container">
+                    <label htmlFor="user" style={{ display: 'inline-block', padding: '0px 1em 0px 8px' }}>
+                        Job Seeker<input type="radio" id="user" name="usertype" className="radio" value="user" onClick={() => setIsEmployer(false)} style={{ display: 'inline-block', margin: '2px 0 0 2px' }} />
+                    </label>
+                    <label htmlFor="employer" style={{ display: 'inline-block', padding: '0px 1em 0px 8px' }}>
+                        Employer<input type="radio" id="employer" name="usertype" className="radio" value="employer" onClick={() => setIsEmployer(true)} style={{ display: 'inline-block', margin: '2px 0 0 2px' }} />
+                    </label>
+                 </div>
                 )}
-                {isEmployer === true && (
+                {isLogin === 'signup' && isEmployer === true && (
                     <div>
                         <label htmlFor="employerSelect">Select Employer Name</label>
                         <select name="employerSelect" id="employerSelect" onChange={(e) => setEmployerName(e.target.value)}>{options}</select>
@@ -163,6 +153,14 @@ function AuthForm() {
                         </div>
                     </div>
                 )}
+                <div className={classes.actions}>
+                    <Link to={'/auth'} onClick={handleToggleMode}>
+                        {isLogin === 'login' ? 'Create new user' : 'Login'}
+                    </Link>
+                    <button disabled={isSubmitting} onClick={handleSubmit}>
+                        {isSubmitting ? 'Submitting...' : 'Submit'}
+                    </button>
+                </div>
             </Form>
         </>
     );

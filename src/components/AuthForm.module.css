@@ -3,7 +3,6 @@
     margin: 2rem auto;
   }
   
-  .form label,
   .form input,
   .form textarea {
     display: block;
@@ -47,16 +46,32 @@
     background-color: var(--color-gray-800);
   }
 
-  label {
-    float: left;
-    clear: none;
-    display: block;
-    padding: 0px 1em 0px 8px;
+  .radio-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
   }
   
-  input[type=radio],
-  input.radio {
-    float: left;
-    clear: none;
+  .radio-container label {
+    display: inline-block;
+    padding: 0px 1em 0px 8px;
+    flex-shrink: 0;
+  }
+  
+  .radio-container input[type=radio],
+  .radio-container input.radio {
+    display: inline-block;
     margin: 2px 0 0 2px;
+    padding-bottom: 40px;
+  }
+
+  label {
+    display: inline-block;
+  }
+  
+  @media screen and (max-width: 768px) {
+    label {
+      display: block;
+    }
   }

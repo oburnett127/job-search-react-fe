@@ -17,6 +17,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 function App() {
 
     const [email, setEmail] = useState("");
+    const [userId, setUserId] = useState(0);
 
     const updateEmail = (newEmail) => {
         console.log("Updating email to:", newEmail);
@@ -44,7 +45,7 @@ function App() {
 
     return (
         <QueryClientProvider client={new QueryClient()}>
-            <UserContext.Provider value={{ email, setEmail: updateEmail }}>
+            <UserContext.Provider value={{ email, setEmail: updateEmail, userId, setUserId }}>
                 <div className={"App"}>
                     <RouterProvider router={router} />
                 </div>
