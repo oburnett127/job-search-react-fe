@@ -11,6 +11,7 @@ import NewJobPage from './pages/NewJob';
 import RootLayout from './pages/Root';
 import DeleteJobPage from './pages/DeleteJob';
 import AuthenticationPage from './pages/Authentication';
+import LogoutPage from './pages/Logout';
 import { UserContext } from './components/UserContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -18,6 +19,7 @@ function App() {
 
     const [email, setEmail] = useState("");
     const [userId, setUserId] = useState(0);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const updateEmail = (newEmail) => {
         console.log("Updating email to:", newEmail);
@@ -29,6 +31,7 @@ function App() {
             <Route path="/" element={<RootLayout />}>
                 <Route index element={<HomePage />}></Route>
                 <Route path="/auth" element={<AuthenticationPage />}></Route>
+                <Route path="/logout" element={<LogoutPage />}></Route>
                 <Route path="/jobs" element={<JobsRootLayout />}>
                     <Route index element={<JobsPage />}></Route>
                     <Route path="/jobs/:id" id="job-detail">
@@ -45,7 +48,7 @@ function App() {
 
     return (
         <QueryClientProvider client={new QueryClient()}>
-            <UserContext.Provider value={{ email, setEmail: updateEmail, userId, setUserId }}>
+            <UserContext.Provider value={{ email, setEmail: updateEmail, userId, setUserId, isLoggedIn, setIsLoggedIn }}>
                 <div className={"App"}>
                     <RouterProvider router={router} />
                 </div>

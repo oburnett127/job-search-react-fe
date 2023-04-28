@@ -6,7 +6,7 @@ const JobApplyForm = ({ job }) => {
 
     const navigate = useNavigate();
     const [message, setMessage] = useState('');
-    const { email, userId } = useContext(UserContext);
+    const { userId } = useContext(UserContext);
 
     const handleSubmit = (e) => {
         e.preventDefault();

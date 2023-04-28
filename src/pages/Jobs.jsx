@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import JobsList from '../components/JobsList';
 import { useQuery } from 'react-query';
 import axios from "axios";
 import { checkAuthLoader } from '../util/auth';
+import { UserContext } from '../components/UserContext';
 
 function JobsPage() {
+  const { isLoggedIn } = useContext(UserContext);
+
+  //const [page, setPage] = useState(1);
+  //const { data: jobsData, isLoading: isLoadingJobs } = useQuery(['jobs', page],
+
   const token = checkAuthLoader();
 
   console.log("jwt string: " + token);
 
-  //const [page, setPage] = useState(1);
-  //const { data: jobsData, isLoading: isLoadingJobs } = useQuery(['jobs', page],
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery('jobs',
       () => { return axios.get("http://localhost:8080/job/list", {
         headers: {
@@ -21,12 +25,13 @@ function JobsPage() {
   );
 
   const jobs = isLoadingJobs ? [] : jobsData;
-
-  console.log(jobs);
+  
+  //console.log(jobs);
 
   return (
       <>
-        {isLoadingJobs && <p>Loading...</p>}
+        {!isLoggedIn && <p style={{textAlign:'center'}}>You must login before you can view the available job opportunities</p>}
+        {isLoggedIn && isLoadingJobs && <p>Loading...</p>}
         
         {!isLoadingJobs && (
           <>

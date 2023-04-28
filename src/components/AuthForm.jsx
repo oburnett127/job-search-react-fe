@@ -6,7 +6,7 @@ import axios from 'axios';
 import { UserContext } from './UserContext';
   
 function AuthForm() {
-    const { setEmail, setUserId } = useContext(UserContext);
+    const { setEmail, setUserId, setIsLoggedIn } = useContext(UserContext);
     const [emailTemp, setEmailTemp] = useState('');
     const [isLogin, setIsLogin] = useState('login');
     const [password, setPassword] = useState('');
@@ -80,11 +80,11 @@ function AuthForm() {
 
         localStorage.setItem('token', token);
         const expiration = new Date();
-        expiration.setHours(expiration.getHours() + 1);
+        expiration.setHours(expiration.getHours() + 2);
         localStorage.setItem('expiration', expiration.toISOString());
 
         setMessage('Log in or sign up was successful');
-
+        setIsLoggedIn(true);
         setEmail(emailTemp);
 
         try {
