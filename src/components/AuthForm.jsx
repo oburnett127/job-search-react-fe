@@ -87,6 +87,8 @@ function AuthForm() {
         setIsLoggedIn(true);
         setEmail(emailTemp);
 
+        console.log("setting isLoggedIn to true");
+
         try {
             const response = await fetch(`http://localhost:8080/auth/getuserid/${emailTemp}`);
             const userId = await response.json();

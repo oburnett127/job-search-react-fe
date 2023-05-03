@@ -12,8 +12,10 @@ import RootLayout from './pages/Root';
 import DeleteJobPage from './pages/DeleteJob';
 import AuthenticationPage from './pages/Authentication';
 import LogoutPage from './pages/Logout';
+import NotFoundPage from './pages/NotFound';
 import { UserContext } from './components/UserContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import PrivateRoute from './PrivateRoute';
 
 function App() {
 
@@ -37,12 +39,26 @@ function App() {
                     <Route path="/jobs/:id" id="job-detail">
                         <Route index element={<JobDetailPage />}></Route>
                         <Route path="/jobs/:id/apply" element={<ApplyJobPage />}></Route>
-                        <Route path="/jobs/:id/edit" element={<UpdateJobPage />}></Route>
-                        <Route path="/jobs/:id/delete" element={<DeleteJobPage />}></Route>
+                        <Route path="/jobs/:id/edit" element={
+                            <PrivateRoute isLoggedIn={isLoggedIn} roleReq={"EMPLOYER"}>
+                                <UpdateJobPage />
+                            </PrivateRoute>}>
+                        </Route>
+                        <Route path="/jobs/:id/delete" element={
+                            <PrivateRoute isLoggedIn={isLoggedIn} roleReq={"EMPLOYER"}>
+                                <DeleteJobPage />
+                            </PrivateRoute>}>
+                        </Route>
                     </Route>
-                    <Route path="/jobs/new" element={<NewJobPage />}></Route>
+                    <Route path="/jobs/new" element={
+                        <PrivateRoute isLoggedIn={isLoggedIn} roleReq={"EMPLOYER"}>
+                            <NewJobPage />
+                        </PrivateRoute>}>
+                    </Route>
                 </Route>
+                <Route path="*" element={<NotFoundPage />}></Route>
             </Route>
+            
         )
     );
 
