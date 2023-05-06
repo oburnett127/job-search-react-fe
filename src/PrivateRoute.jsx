@@ -1,31 +1,18 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from "./components/UserContext";
-import axios from "axios";
 
 const PrivateRoute = ({ isLoggedIn, roleReq, children }) => {
-    const { userId } = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     const authorize = () => {
         setLoading(true);
 
-        axios({
-            method: 'get',
-            url: `http://localhost:8080/auth/getrole/${userId}`
-        }).then(({ data }) => {
-            if(data) {
-                const userRole = data;
-                if(userRole === roleReq) setAuth(true);
-                else setAuth(false);
-            } else {
-                setAuth(false);
-            }
+        const userRole = user.role;
+        if(userRole === roleReq) setAuth(true);
+        else setAuth(false);
 
-            setLoading(false);
-        }).catch((error) => {
-            console.log(error);
-            setLoading(false);
-        })
+        setLoading(false);
     }
 
     const [loading, setLoading] = useState(true);

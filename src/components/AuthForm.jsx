@@ -6,7 +6,7 @@ import axios from 'axios';
 import { UserContext } from './UserContext';
   
 function AuthForm() {
-    const { setEmail, setUserId, setIsLoggedIn } = useContext(UserContext);
+    const { setUser, setIsLoggedIn } = useContext(UserContext);
     const [emailTemp, setEmailTemp] = useState('');
     const [isLogin, setIsLogin] = useState('login');
     const [password, setPassword] = useState('');
@@ -85,16 +85,15 @@ function AuthForm() {
 
         setMessage('Log in or sign up was successful');
         setIsLoggedIn(true);
-        setEmail(emailTemp);
 
         console.log("setting isLoggedIn to true");
 
         try {
-            const response = await fetch(`http://localhost:8080/auth/getuserid/${emailTemp}`);
-            const userId = await response.json();
-            setUserId(userId);
-            console.log("userId is: " + userId);
-          } catch (error) {
+            const response = await fetch(`http://localhost:8080/auth/getuser/${emailTemp}`);
+            const user = await response.json();
+            setUser(user);
+            console.log("userId is: " + user.id);
+        } catch (error) {
             if (error.response) {
               console.log(error.response);
             } else if (error.request) {
@@ -102,7 +101,7 @@ function AuthForm() {
             } else {
               console.log(error);
             }
-          }
+        }
 
         return redirect('/');
     };

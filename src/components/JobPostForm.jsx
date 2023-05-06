@@ -8,16 +8,16 @@ function JobPostForm({ method }) {
   const data = useActionData();
   const navigate = useNavigate();
   const navigation = useNavigation();
-  const { email, userId } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const isSubmitting = navigation.state === 'submitting';
   const [formData, setFormData] = useState({ title: '', description: '' });
   const [employer, setEmployer] = useState(null);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    console.log("user's email " + email);
+    console.log("user's email " + user.email);
 
-    axios.get(`http://localhost:8080/auth/getemployer/${email}`)
+    axios.get(`http://localhost:8080/auth/getemployer/${user.email}`)
       .then((response) => {
         console.log("get employer response " + response?.data);
         setEmployer(response?.data);
@@ -32,7 +32,7 @@ function JobPostForm({ method }) {
           console.log(error);
         }
       }));
-  }, [email]);
+  }, [user.email]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;

@@ -6,7 +6,7 @@ const JobApplyForm = ({ job }) => {
 
     const navigate = useNavigate();
     const [message, setMessage] = useState('');
-    const { userId } = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -17,7 +17,7 @@ const JobApplyForm = ({ job }) => {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: userId, jobId: job.id })
+            body: JSON.stringify({ userId: user.id, jobId: job.id })
           };
 
         fetch('http://localhost:8080/job/apply', requestOptions)

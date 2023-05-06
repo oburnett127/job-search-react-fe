@@ -19,14 +19,15 @@ import PrivateRoute from './PrivateRoute';
 
 function App() {
 
-    const [email, setEmail] = useState("");
-    const [userId, setUserId] = useState(0);
+    //const [email, setEmail] = useState("");
+    const [user, setUser] = useState();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    //const [employerId, setEmployerId] = useState(0);
 
-    const updateEmail = (newEmail) => {
-        console.log("Updating email to:", newEmail);
-        setEmail(newEmail);
-    };
+    // const updateEmail = (newEmail) => {
+    //     console.log("Updating email to:", newEmail);
+    //     setEmail(newEmail);
+    // };
 
     const router = createBrowserRouter(
         createRoutesFromElements(
@@ -64,7 +65,7 @@ function App() {
 
     return (
         <QueryClientProvider client={new QueryClient()}>
-            <UserContext.Provider value={{ email, setEmail: updateEmail, userId, setUserId, isLoggedIn, setIsLoggedIn }}>
+            <UserContext.Provider value={{ user, setUser, isLoggedIn, setIsLoggedIn }}>
                 <div className={"App"}>
                     <RouterProvider router={router} />
                 </div>
