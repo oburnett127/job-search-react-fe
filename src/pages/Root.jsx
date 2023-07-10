@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useNavigation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import MainNavigation from '../components/MainNavigation';
 
 function RootLayout() {
@@ -9,7 +9,6 @@ function RootLayout() {
     <>
       <MainNavigation />
       <main>
-        {/* {navigation.state === 'loading' && <p>Loading...</p>} */}
         <Outlet />
       </main>
     </>

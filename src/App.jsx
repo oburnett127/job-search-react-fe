@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } from 'react-router-dom';
 import ApplyJobPage from './pages/ApplyJob';
 import UpdateJobPage from './pages/UpdateJob';
-import ErrorPage from './pages/Error';
 import JobDetailPage from './pages/JobDetail';
 import JobsPage from './pages/Jobs';
 import JobsRootLayout from './pages/JobsRoot';
@@ -19,15 +18,8 @@ import PrivateRoute from './PrivateRoute';
 
 function App() {
 
-    //const [email, setEmail] = useState("");
     const [user, setUser] = useState();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    //const [employerId, setEmployerId] = useState(0);
-
-    // const updateEmail = (newEmail) => {
-    //     console.log("Updating email to:", newEmail);
-    //     setEmail(newEmail);
-    // };
 
     const router = createBrowserRouter(
         createRoutesFromElements(
@@ -59,7 +51,6 @@ function App() {
                 </Route>
                 <Route path="*" element={<NotFoundPage />}></Route>
             </Route>
-            
         )
     );
 

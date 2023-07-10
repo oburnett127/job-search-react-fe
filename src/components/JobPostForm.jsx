@@ -16,7 +16,7 @@ function JobPostForm({ method }) {
   const {register, handleSubmit, formState: {errors}} = useForm();
 
   useEffect(() => {
-    console.log("user's email " + user.email);
+    console.log("user's email: " + user.email);
 
     axios.get(`http://localhost:8080/auth/getemployer/${user.email}`)
       .then((response) => {
@@ -36,7 +36,7 @@ function JobPostForm({ method }) {
   }, [user.email]);
 
   const onSubmit = (data) => {
-    console.log("inside handleSubmit: " + employer?.id);
+    console.log("inside handleSubmit, empID is: " + employer?.id);
 
     const requestOptions = {
       method: 'POST',

@@ -7,13 +7,8 @@ import { UserContext } from '../components/UserContext';
 
 function JobsPage() {
   const { isLoggedIn } = useContext(UserContext);
-
-  //const [page, setPage] = useState(1);
-  //const { data: jobsData, isLoading: isLoadingJobs } = useQuery(['jobs', page],
-
   const token = checkAuthLoader();
-
-  console.log("jwt string: " + token);
+  //console.log("jwt string: " + token);
 
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery('jobs',
       () => { return axios.get("http://localhost:8080/job/list", {
@@ -25,7 +20,6 @@ function JobsPage() {
   );
 
   const jobs = isLoadingJobs ? [] : jobsData;
-  
   //console.log(jobs);
 
   return (
@@ -34,22 +28,7 @@ function JobsPage() {
         {isLoggedIn && isLoadingJobs && <p>Loading...</p>}
         
         {!isLoadingJobs && (
-          <>
             <JobsList jobs={jobs} />
-
-            {/* <div className="nav btn-container">
-              <button
-                onClick={() => setPage((prevState) => Math.max(prevState - 1, 0))}
-                disabled={page === 1}
-              >
-                Prev Page
-              </button>
-
-              <button onClick={() => setPage((prevState) => prevState + 1)}>
-                Next Page
-              </button>
-            </div> */}
-          </>
         )}
       </>
   );

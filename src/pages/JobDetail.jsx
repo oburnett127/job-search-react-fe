@@ -11,13 +11,9 @@ function JobDetailPage() {
         axios('http://localhost:8080/job/get/' + id).then((res) => res.data)
     );
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+    if (isLoading) return <div>Loading...</div>;
 
-    if (error) {
-        return <div>Error: {error['message']}</div>;
-    }
+    if (error) return <div>Error: {error['message']}</div>;
 
     return <JobItem job={jobDetail} />
 }

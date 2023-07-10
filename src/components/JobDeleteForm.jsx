@@ -49,7 +49,6 @@ const JobDeleteForm = (id) => {
                     </button>
                 </>
             }
-
         </>
     );
 };

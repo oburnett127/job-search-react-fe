@@ -62,9 +62,6 @@ function AuthForm() {
 
                         if(data.compName === '') {
                             setEmployerName(empJson['name']);
-                            //localStorage.setItem('employerName', employerName);
-                            //console.log("employer name inside if: " + employerName);
-                            //console.log("line 75 " + empJson['name']);
                         } else {
                             setEmployerName(data.compName);
                         }
@@ -78,15 +75,12 @@ function AuthForm() {
                     };
                    
                     //console.log("employer name: " + employerName);
-                    //console.log("line 4");
                 } else {
                     authData = {
                         email: data.email,
                         password: data.password,
                         isEmployer: false
                     };
-                    
-                    //console.log("line 5");
                 }
             }
 
@@ -135,11 +129,11 @@ function AuthForm() {
                 console.log("userId is: " + user.id);
             } catch (error) {
                 if (error.response) {
-                console.log(error.response);
+                    console.log(error.response);
                 } else if (error.request) {
-                console.log("network error");
+                    console.log("network error");
                 } else {
-                console.log(error);
+                    console.log(error);
                 }
             }
         } catch(err) {
@@ -183,7 +177,7 @@ function AuthForm() {
                         <p>If you do not see your company's name in the drop down list  
                             you can type it in the box below to have it added to the list.</p>
                         <div>
-                            <label htmlFor="compName" style={{ display: 'inline-block', padding: '0px 1em 0px 8px' }}>Add employer name:</label>
+                            <label htmlFor="compName">Add employer name:</label>
                             <input type="text" {...register("compName")} onChange={(e) => setEmployerName(e.target.value)} />
                         </div>
                     </div>

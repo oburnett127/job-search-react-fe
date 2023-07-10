@@ -1,4 +1,3 @@
-import { Navigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from "./components/UserContext";
 
@@ -25,7 +24,7 @@ const PrivateRoute = ({ isLoggedIn, roleReq, children }) => {
     return loading ? (
         <h1>Loading...</h1>
     ) : auth ? children : (
-        <Navigate to="/" />
+        <p>You do not have access to the requested resource</p>
     );
 };
 

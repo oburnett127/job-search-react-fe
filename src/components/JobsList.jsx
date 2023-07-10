@@ -6,7 +6,6 @@ import classes from './JobsList.module.css';
 function JobsList({jobs}) {
 
     //console.log(jobs);
-    //console.log(typeof jobs);
 
     return (
         jobs?.data && (

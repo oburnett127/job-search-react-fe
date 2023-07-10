@@ -9,9 +9,6 @@ const client = (() => {
 
 const request = async function (options) {
     const onSuccess = function (response) {
-        // const {
-        //     data: { message }
-        // } = response;
         return response;
     };
 
