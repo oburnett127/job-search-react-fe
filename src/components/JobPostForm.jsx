@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, useNavigation } from 'react-router-dom';
-import axios from 'axios';
 import classes from './JobPostForm.module.css';
 import { UserContext } from './UserContext';
 import { useForm } from 'react-hook-form';
@@ -10,38 +9,17 @@ function JobPostForm({ method }) {
   const navigation = useNavigation();
   const { user } = useContext(UserContext);
   const isSubmitting = navigation.state === 'submitting';
-  const [employer, setEmployer] = useState(null);
   const [message, setMessage] = useState(null);
 
   const {register, handleSubmit, formState: {errors}} = useForm();
 
-  useEffect(() => {
-    console.log("user's email: " + user.email);
-
-    axios.get(`http://localhost:8080/auth/getemployer/${user.email}`)
-      .then((response) => {
-        console.log("get employer response " + response?.data);
-        setEmployer(response?.data);
-      })
-      .catch((error => {
-        if(error.response) {
-          console.log(error.response);
-          setMessage('You must login before you can post a job.');
-        } else if(error.request) {
-          console.log("network error");
-        } else {
-          console.log(error);
-        }
-      }));
-  }, [user.email]);
-
   const onSubmit = (data) => {
-    console.log("inside handleSubmit, empID is: " + employer?.id);
+    console.log("inside handleSubmit, empID is: " + user?.employerId);
 
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: data.title, employerId: employer?.id, description: data.description})
+      body: JSON.stringify({ title: data.title, employerId: user?.employerId, description: data.description})
     };
   
     fetch('http://localhost:8080/job/create', requestOptions)

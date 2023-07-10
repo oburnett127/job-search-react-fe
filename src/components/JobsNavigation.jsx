@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
+import { UserContext } from './UserContext';
 import classes from './JobsNavigation.module.css';
 
 function JobsNavigation() {
+  const { isLoggedIn } = useContext(UserContext);
+  const { user } = useContext(UserContext);
+
   return (
     <header className={classes.header}>
       <nav>
@@ -19,6 +23,7 @@ function JobsNavigation() {
             </NavLink>
           </li>
           <li>
+          {isLoggedIn && user?.role === 'EMPLOYER' && (
             <NavLink
               to="/jobs/new"
               className={({ isActive }) =>
@@ -27,6 +32,7 @@ function JobsNavigation() {
             >
               New Job
             </NavLink>
+          )}
           </li>
         </ul>
       </nav>

@@ -84,8 +84,7 @@ function AuthForm() {
                 }
             }
 
-            console.log("line 6");
-
+            //console.log("line 6");
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {

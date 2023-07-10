@@ -10,6 +10,9 @@ function JobItem({ job }) {
     const { user } = useContext(UserContext);
     const userRole = user.role;
 
+    // console.log("user.empId: " + user?.employerId);
+    // console.log("job.empId: " + job.employerId);
+
     return (
         <article className={classes.job}>
             <h2>{job.title}</h2>
@@ -17,14 +20,15 @@ function JobItem({ job }) {
             <time>{job.postDate}</time>
             <p>{job.description}</p>
             <menu className={classes.actions}>
-                { userRole === 'USER' && (
+                { 
+                  userRole === 'USER' && (
                         <Link to={{ pathname: `/jobs/${job.id}/apply` }} state={{job}}>
                             <CheckIcon />
                         </Link>
                     )
                 }
                 {
-                  userRole === 'EMPLOYER' && (
+                  userRole === 'EMPLOYER' && user?.employerId === job.employerId && (
                     <>
                         <Link to={{ pathname: `/jobs/${job.id}/edit` }} state={{job}}>
                                 <EditIcon />
