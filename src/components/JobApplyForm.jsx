@@ -11,16 +11,16 @@ const JobApplyForm = ({ job }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log(job);
-        console.log(job.id);
+        console.log("job.id: " + job.id);
+        console.log("typeof user.id: " + typeof(user.id));
 
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: user.id, jobId: job.id })
+            body: JSON.stringify({ jobId: job.id.toString(), applicantId: user.id.toString() })
           };
 
-        fetch('http://localhost:8080/job/apply', requestOptions)
+        fetch('http://localhost:8080/application/create', requestOptions)
         .then((response) => {
             console.log(response);
             if(response.ok) {
