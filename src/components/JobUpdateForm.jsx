@@ -15,7 +15,7 @@ const JobUpdateForm = ({ job }) => {
     const {register, handleSubmit, formState: {errors}} = useForm();
 
     const { mutate } = useMutation(
-        (updatedJob) => axios.post(`http://localhost:8080/job/update/${job.id}`, updatedJob),
+        (updatedJob) => axios.post(process.env.REACT_APP_SERVER_URL + `/job/update/${job.id}`, updatedJob),
         {
             onSuccess: () => {
                 queryClient.invalidateQueries("jobs");

@@ -8,7 +8,7 @@ function JobDetailPage() {
     const {id} = useParams();
 
     const { isLoading, error, data: jobDetail } = useQuery('jobDetail', () =>
-        axios('http://localhost:8080/job/get/' + id).then((res) => res.data)
+        axios(process.env.REACT_APP_SERVER_URL + '/job/get/' + id).then((res) => res.data)
     );
 
     if (isLoading) return <div>Loading...</div>;

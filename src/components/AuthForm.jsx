@@ -16,7 +16,7 @@ function AuthForm() {
     const {register, handleSubmit, formState: {errors}} = useForm();
 
     const { data: empList } = useQuery('employerList',
-        () => { return axios.get('http://localhost:8080/employer/list')});
+        () => { return axios.get(process.env.REACT_APP_SERVER_URL + '/employer/list')});
 
     const options = empList?.data?.map((employer) => (
         <option key={employer.id} value={JSON.stringify(employer)}>
@@ -41,9 +41,9 @@ function AuthForm() {
             let url = '';
 
             if(isLogin === 'login') {
-                url = 'http://localhost:8080/auth/login';
+                url = process.env.REACT_APP_SERVER_URL + '/auth/login';
             } else {
-                url = 'http://localhost:8080/auth/signup';
+                url = process.env.REACT_APP_SERVER_URL + '/auth/signup';
 
                 console.log("line 2");
 
@@ -122,7 +122,7 @@ function AuthForm() {
             //console.log("setting isLoggedIn to true");
 
             try {
-                const response = await fetch(`http://localhost:8080/auth/getuser/${data.email}`);
+                const response = await fetch(process.env.REACT_APP_SERVER_URL + `/auth/getuser/${data.email}`);
                 const user = await response.json();
                 setUser(user);
                 console.log("userId is: " + user.id);

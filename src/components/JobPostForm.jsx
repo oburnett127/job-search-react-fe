@@ -22,7 +22,7 @@ function JobPostForm({ method }) {
       body: JSON.stringify({ title: data.title, employerId: user?.employerId, description: data.description})
     };
   
-    fetch('http://localhost:8080/job/create', requestOptions)
+    fetch(process.env.REACT_APP_SERVER_URL + '/job/create', requestOptions)
     .then((response) => {
       console.log(response);
       if(response.ok) {

@@ -14,7 +14,7 @@ function JobsList({jobs}) {
     const { user } = useContext(UserContext);
 
     const { data: applications } = useQuery('applications',
-      () => { return axios.get(`http://localhost:8080/application/getbyapplicantid/${user.id}`);}
+      () => { return axios.get(process.env.REACT_APP_SERVER_URL + `/application/getbyapplicantid/${user.id}`);}
     );
 
     let jobIds = [];

@@ -1,0 +1,36 @@
+type Token @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  expired: Int!
+  revoked: Int!
+  token: String
+  token_type: String
+  user_id: Int
+}
+
+type Job @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  description: String!
+  employer_id: Int!
+  post_date: String!
+  title: String!
+}
+
+type Employer @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+}
+
+type Application @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  applicant_id: Int!
+  job_id: Int!
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  email: String!
+  employer_id: Int
+  password: String!
+  role: String
+  serial_version_uid: Int!
+}

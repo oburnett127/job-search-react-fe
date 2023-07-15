@@ -5,7 +5,7 @@ import axios from "axios";
 
 function JobsPage() {
   const { data: jobsData, isLoading: isLoadingJobs } = useQuery('jobs',
-      () => { return axios.get("http://localhost:8080/job/list");}
+      () => { return axios.get(process.env.REACT_APP_SERVER_URL + '/job/list');}
   );
 
   const jobs = isLoadingJobs ? [] : jobsData;

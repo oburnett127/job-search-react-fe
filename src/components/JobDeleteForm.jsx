@@ -13,7 +13,7 @@ const JobDeleteForm = (id) => {
 
     const deleteJob = useMutation(
         async () => {
-            await axios.post(`http://localhost:8080/job/delete/${id.id}`);
+            await axios.post(process.env.REACT_APP_SERVER_URL + `/job/delete/${id.id}`);
         },
         {
             onSuccess: () => {

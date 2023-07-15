@@ -1,0 +1,5 @@
+{
+  "AppSyncApiName": "jobsearchbe",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false
+}

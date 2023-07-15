@@ -20,7 +20,7 @@ const JobApplyForm = ({ job }) => {
             body: JSON.stringify({ jobId: job.id.toString(), applicantId: user.id.toString() })
           };
 
-        fetch('http://localhost:8080/application/create', requestOptions)
+        fetch(process.env.REACT_APP_SERVER_URL + '/application/create', requestOptions)
         .then((response) => {
             console.log(response);
             if(response.ok) {
