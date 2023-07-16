@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/items": {
+      "name": "/items",
+      "lambdaFunction": "jobsearchbe35228d80",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

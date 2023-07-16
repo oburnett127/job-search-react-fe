@@ -1,5 +1,19 @@
 {
   "api": {
+    "api8c50d815": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "jobsearchbe35228d80"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    },
     "jobsearchbe": {
       "dependsOn": [],
       "output": {
@@ -20,6 +34,13 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync"
+    }
+  },
+  "function": {
+    "jobsearchbe35228d80": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   }
 }
