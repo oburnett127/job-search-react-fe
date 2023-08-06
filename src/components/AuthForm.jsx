@@ -24,6 +24,22 @@ function AuthForm() {
         </option>
     ));
     
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    useEffect(() => {
+        fetch('http://localhost:8080/csrf-token', {
+            method: 'GET',
+            credentials: 'include' // To include cookies
+        }).then(() => {
+            const csrfToken = getCookie('XSRF-TOKEN');
+            sessionStorage.setItem('csrfToken', csrfToken);
+          });
+      }, []);
+
     useEffect(() => {
         localStorage.setItem('employerName', employerName);
     }, [employerName]);
@@ -83,32 +99,38 @@ function AuthForm() {
                     };
                 }
             }
+                    
+            const csrfToken = sessionStorage.getItem('csrfToken');
 
-            //console.log("line 6");
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-XSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify(authData),
+                credentials: 'include'
             });
-
+            
+            const resData = await response.json();
+            
+            console.log(response);
+            
             if (isLogin !== 'login' && response.status === 409) {
-                //console.log("line 8");
                 setMessage('The email address you entered is already taken. Please enter a different email.');
                 throw new Error('The email address you entered is already taken. Please enter a different email.');
             }
-
-            //console.log("isLogin: " + isLogin);
-            //console.log("response.status: " + response.status);
-
+            
             if (!response.ok) {
-                //console.log("line 9");
                 setMessage('Log in or registration failed');
-                throw new Error('Could not authenticate user.');
+                throw new Error('Could not authenticate or register user.');
+            }
+            
+            if(isLogin !== 'login') {
+                setMessage('Registration successful');
+                return;
             }
 
-            const resData = await response.json();
             const token = resData.token;
 
             localStorage.setItem('token', token);
@@ -116,7 +138,7 @@ function AuthForm() {
             expiration.setHours(expiration.getHours() + 2);
             localStorage.setItem('expiration', expiration.toISOString());
 
-            setMessage('Log in or sign up was successful');
+            setMessage('Log in successful');
             setIsLoggedIn(true);
 
             //console.log("setting isLoggedIn to true");
@@ -136,7 +158,6 @@ function AuthForm() {
                 }
             }
         } catch(err) {
-            //console.log("line 10");
             console.log(err);
         }
     };
