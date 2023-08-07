@@ -13,9 +13,17 @@ function JobsList({jobs}) {
 
     const { user } = useContext(UserContext);
 
+    const csrfToken = sessionStorage.getItem('csrfToken');
+    const jwtToken = localStorage.getItem('jwtToken');
+
     const { data: applications } = useQuery('applications',
-      () => { return axios.get(process.env.REACT_APP_SERVER_URL + `/application/getbyapplicantid/${user.id}`);}
-    );
+      () => { return axios.get(process.env.REACT_APP_SERVER_URL + `/application/getbyapplicantid/${user.id}`, {
+        headers: {
+            'X-XSRF-TOKEN': csrfToken,
+            'Authorization': `Bearer ${jwtToken}`,
+        },
+        credentials: 'include'
+      })});
 
     let jobIds = [];
 

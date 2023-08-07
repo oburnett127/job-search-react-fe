@@ -4,7 +4,8 @@ import { UserContext } from '../components/UserContext';
 function LogoutPage() {
   const { setIsLoggedIn } = useContext(UserContext);
    
-  localStorage.removeItem('token');
+  localStorage.removeItem('jwtToken');
+  sessionStorage.removeItem('csrfToken');
   setIsLoggedIn(false); 
   
   return (

@@ -6,6 +6,12 @@ import axios from 'axios';
 import { UserContext } from './UserContext';
 import { useForm } from 'react-hook-form';
   
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 function AuthForm() {
     const { setUser, setIsLoggedIn } = useContext(UserContext);
     const [isLogin, setIsLogin] = useState('login');
@@ -23,22 +29,16 @@ function AuthForm() {
             {employer.name}
         </option>
     ));
-    
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
 
-    useEffect(() => {
-        fetch('http://localhost:8080/csrf-token', {
-            method: 'GET',
-            credentials: 'include' // To include cookies
-        }).then(() => {
-            const csrfToken = getCookie('XSRF-TOKEN');
-            sessionStorage.setItem('csrfToken', csrfToken);
-          });
-      }, []);
+    // useEffect(() => {
+    //     fetch('http://localhost:8080/csrf-token', {
+    //             method: 'GET',
+    //             credentials: 'include'
+    //         }).then(() => {
+    //             const csrfToken = getCookie('XSRF-TOKEN');
+    //             sessionStorage.setItem('csrfToken', csrfToken);
+    //         });
+    // }, []);
 
     useEffect(() => {
         localStorage.setItem('employerName', employerName);
@@ -48,6 +48,14 @@ function AuthForm() {
         try {
             setMessage('');
             //console.log("line 1");
+
+            await fetch('http://localhost:8080/csrf-token', {
+                method: 'GET',
+                credentials: 'include'
+            }).then(() => {
+                const csrfToken = getCookie('XSRF-TOKEN');
+                sessionStorage.setItem('csrfToken', csrfToken);
+            });
 
             let authData = {
                 email: data.email,
@@ -112,9 +120,7 @@ function AuthForm() {
                 credentials: 'include'
             });
             
-            const resData = await response.json();
-            
-            console.log(response);
+            //console.log(response);
             
             if (isLogin !== 'login' && response.status === 409) {
                 setMessage('The email address you entered is already taken. Please enter a different email.');
@@ -131,23 +137,37 @@ function AuthForm() {
                 return;
             }
 
-            const token = resData.token;
+            const resData = await response.json();
+            const jwtToken = resData.token;
 
-            localStorage.setItem('token', token);
+            localStorage.setItem('jwtToken', jwtToken);
             const expiration = new Date();
             expiration.setHours(expiration.getHours() + 2);
             localStorage.setItem('expiration', expiration.toISOString());
 
-            setMessage('Log in successful');
-            setIsLoggedIn(true);
-
-            //console.log("setting isLoggedIn to true");
-
             try {
-                const response = await fetch(process.env.REACT_APP_SERVER_URL + `/auth/getuser/${data.email}`);
+                const response = await fetch(process.env.REACT_APP_SERVER_URL + `/auth/getuser/${data.email}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-XSRF-TOKEN': csrfToken,
+                        'Authorization': `Bearer ${jwtToken}`,
+                    },
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    setMessage('Something went wrong. Please attempt logging in again.');
+                    throw new Error('Problem retrieving the user account data, user should try logging out and back in or attempt logging in again.');
+                }
+                
                 const user = await response.json();
                 setUser(user);
+
                 console.log("userId is: " + user.id);
+
+                setMessage('Log in successful');
+                setIsLoggedIn(true);
+
             } catch (error) {
                 if (error.response) {
                     console.log(error.response);
