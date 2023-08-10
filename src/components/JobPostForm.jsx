@@ -13,32 +13,28 @@ function JobPostForm({ method }) {
 
   const {register, handleSubmit, formState: {errors}} = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("inside handleSubmit, empID is: " + user?.employerId);
-
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: data.title, employerId: user?.employerId, description: data.description})
-    };
   
-    fetch(process.env.REACT_APP_SERVER_URL + '/job/create', requestOptions)
-    .then((response) => {
-      console.log(response);
-      if(response.ok) {
-        setMessage('Your job was successfully created.');
-      }
-    })
-    .catch((error => {
-      if(error.response) {
-        console.log(error.response);
-        setMessage('An error occurred. Your job could not be created.');
-      } else if(error.request) {
-        console.log("network error");
-      } else {
-        console.log(error);
-      }
-    }));
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    const response = await fetch(process.env.REACT_APP_SERVER_URL + '/job/create', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwtToken}`,
+      },
+      credentials: 'include',
+      body: JSON.stringify({ title: data.title, employerId: user?.employerId, description: data.description}),
+    });
+      
+    if(!response.ok) {
+      setMessage('An error occurred. Your job could not be created.');
+      console.error('An error occurred. Your job could not be created.');
+      return;
+    } else {
+      setMessage('Your job was successfully created.');
+    }
   }
 
   const handleCancel = () => {

@@ -31,13 +31,13 @@ function App() {
                     <Route index element={<JobsPage />}></Route>
                     <Route path="/jobs/:id" id="job-detail">
                         <Route index element={<JobDetailPage />}></Route>
-                        <Route path="/jobs/:id/apply" element={<ApplyJobPage />}></Route>
-                        <Route path="/jobs/:id/edit" element={
+                        <Route path="apply" element={<ApplyJobPage />}></Route>
+                        <Route path="edit" element={
                             <PrivateRoute isLoggedIn={isLoggedIn} roleReq={"EMPLOYER"}>
                                 <UpdateJobPage />
                             </PrivateRoute>}>
                         </Route>
-                        <Route path="/jobs/:id/delete" element={
+                        <Route path="delete" element={
                             <PrivateRoute isLoggedIn={isLoggedIn} roleReq={"EMPLOYER"}>
                                 <DeleteJobPage />
                             </PrivateRoute>}>

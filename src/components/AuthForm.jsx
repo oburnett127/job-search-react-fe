@@ -5,12 +5,14 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import { UserContext } from './UserContext';
 import { useForm } from 'react-hook-form';
-  
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-}
+
+//Not using a cookie for csrf token for now because of new spring security standards
+//and to provide for protection against BREACH attacks.
+// function getCookie(name) {
+//     const value = `; ${document.cookie}`;
+//     const parts = value.split(`; ${name}=`);
+//     if (parts.length === 2) return parts.pop().split(';').shift();
+// }
 
 function AuthForm() {
     const { setUser, setIsLoggedIn } = useContext(UserContext);
@@ -30,16 +32,6 @@ function AuthForm() {
         </option>
     ));
 
-    // useEffect(() => {
-    //     fetch('http://localhost:8080/csrf-token', {
-    //             method: 'GET',
-    //             credentials: 'include'
-    //         }).then(() => {
-    //             const csrfToken = getCookie('XSRF-TOKEN');
-    //             sessionStorage.setItem('csrfToken', csrfToken);
-    //         });
-    // }, []);
-
     useEffect(() => {
         localStorage.setItem('employerName', employerName);
     }, [employerName]);
@@ -47,15 +39,21 @@ function AuthForm() {
     const onSubmit = async (data) => {
         try {
             setMessage('');
-            //console.log("line 1");
 
-            await fetch('http://localhost:8080/csrf-token', {
-                method: 'GET',
-                credentials: 'include'
-            }).then(() => {
-                const csrfToken = getCookie('XSRF-TOKEN');
-                sessionStorage.setItem('csrfToken', csrfToken);
-            });
+            // await fetch('http://localhost:8080/csrf-token', {
+            //     method: 'GET',
+            //     credentials: 'include'
+            // }).then(() => {
+            //     const csrfToken = getCookie('XSRF-TOKEN');
+            //     sessionStorage.setItem('csrfToken', csrfToken);
+            // });
+                
+            //const csrfToken = csrfResponse.headers.get('X-CSRF-TOKEN');
+            //console.log("csrfToken is " + csrfToken);
+            
+            // if (csrfToken) {
+            //     sessionStorage.setItem('csrfToken', csrfToken);
+            // }
 
             let authData = {
                 email: data.email,
@@ -107,27 +105,25 @@ function AuthForm() {
                     };
                 }
             }
-                    
-            const csrfToken = sessionStorage.getItem('csrfToken');
 
-            const response = await fetch(url, {
+            //const csrfToken = sessionStorage.getItem('csrfToken');
+
+            const loginResponse = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-XSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify(authData),
-                credentials: 'include'
             });
             
             //console.log(response);
             
-            if (isLogin !== 'login' && response.status === 409) {
+            if (isLogin !== 'login' && loginResponse.status === 409) {
                 setMessage('The email address you entered is already taken. Please enter a different email.');
                 throw new Error('The email address you entered is already taken. Please enter a different email.');
             }
             
-            if (!response.ok) {
+            if (!loginResponse.ok) {
                 setMessage('Log in or registration failed');
                 throw new Error('Could not authenticate or register user.');
             }
@@ -137,7 +133,7 @@ function AuthForm() {
                 return;
             }
 
-            const resData = await response.json();
+            const resData = await loginResponse.json();
             const jwtToken = resData.token;
 
             localStorage.setItem('jwtToken', jwtToken);
@@ -149,10 +145,8 @@ function AuthForm() {
                 const response = await fetch(process.env.REACT_APP_SERVER_URL + `/auth/getuser/${data.email}`, {
                     method: 'GET',
                     headers: {
-                        'X-XSRF-TOKEN': csrfToken,
                         'Authorization': `Bearer ${jwtToken}`,
                     },
-                    credentials: 'include'
                 });
                 
                 if (!response.ok) {

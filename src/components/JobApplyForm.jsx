@@ -1,60 +1,81 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from './UserContext';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const JobApplyForm = ({ job }) => {
-
-    const navigate = useNavigate();
-    const [message, setMessage] = useState('');
+const JobApplyForm = () => {
+    const [message, setMessage] = useState("");
     const { user } = useContext(UserContext);
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const [job, setJob] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        const jwtToken = localStorage.getItem('jwtToken');
+        fetch(process.env.REACT_APP_SERVER_URL + '/job/get/' + id, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`,
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                setMessage('An error occurred. Job details could not be retrieved.');
+                throw new Error('Job details could not be retrieved.');
+            }
+            return response.json();
+        })
+        .then(data => setJob(data))
+        .catch(error => console.error(error));
+    }, [id]);
+           
+    const handleSubmit = async (e) => {
+
         e.preventDefault();
 
-        console.log("job.id: " + job.id);
-        console.log("typeof user.id: " + typeof(user.id));
+        setIsSubmitting(true);
 
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ jobId: job.id.toString(), applicantId: user.id.toString() })
-          };
-
-        fetch(process.env.REACT_APP_SERVER_URL + '/application/create', requestOptions)
-        .then((response) => {
-            console.log(response);
-            if(response.ok) {
-                setMessage('Your job application was submitted.');
-            }
-        })
-        .catch((error => {
-            if(error.response) {
-                console.log(error.response);
+        const jwtToken = localStorage.getItem('jwtToken');
+    
+        try {
+            const response = await fetch(process.env.REACT_APP_SERVER_URL + '/application/create', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ jobId: job.id.toString(), applicantId: user.id.toString() }),
+            });
+    
+            if(!response.ok) {
                 setMessage('An error occurred. Your job application could not be submitted.');
-            } else if(error.request) {
-                console.log("network error");
+                console.error('application submit failed.');
             } else {
-                console.log(error);
+                setMessage("Your job application was submitted successfully.");
             }
-        }));
-
+        } catch (error) {
+            setMessage('Application submit failed.');
+            console.error('error:', error);
+        }
+    
+        setIsSubmitting(false);
     };
 
-    const handleCancel = (e) => {
-        navigate('..');
-    };
+    const handleCancel = () => {
+        navigate('/jobs');
+    }
 
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <div>
                 {message}<br />
-                {job.title}
+                {job?.title}
                 <p>Are you sure you want to apply for this job?</p>
             </div>
-            <button type="button" onClick={handleCancel}>
+            <button type="button" onClick={handleCancel} disabled={isSubmitting}>
                 Cancel
             </button>
-            <button type="submit" onClick={handleSubmit}>
+            <button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
                 Yes
             </button>
         </form>

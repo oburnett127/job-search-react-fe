@@ -9,11 +9,21 @@ const JobDeleteForm = (id) => {
     const [jobDeleted, setJobDeleted] = useState(false);
     const [message, setMessage] = useState("Are you sure you want to delete this job?");
 
-    console.log(id);
+    //console.log(id);
+
+    const jwtToken = localStorage.getItem('jwtToken');
 
     const deleteJob = useMutation(
         async () => {
-            await axios.post(process.env.REACT_APP_SERVER_URL + `/job/delete/${id.id}`);
+            try {
+                await axios.delete(process.env.REACT_APP_SERVER_URL + `/job/delete/${id.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`,
+                    },
+                });
+            } catch (error) {
+                throw error;
+            }
         },
         {
             onSuccess: () => {
@@ -41,11 +51,11 @@ const JobDeleteForm = (id) => {
             <p>{message}</p>
             { !jobDeleted &&
                 <>
-                    <button onClick={handleDelete}>
-                        Yes
-                    </button>
                     <button onClick={handleCancel}>
                         Cancel
+                    </button>
+                    <button onClick={handleDelete}>
+                        Yes, I am sure
                     </button>
                 </>
             }

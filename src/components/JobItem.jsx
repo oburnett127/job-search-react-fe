@@ -8,32 +8,33 @@ import { UserContext } from "./UserContext";
 
 function JobItem({ job }) {
     const { user } = useContext(UserContext);
-    const userRole = user.role;
+    const userRoles = user.roles;
+    const jobData = job.data;
 
-    // console.log("user.empId: " + user?.employerId);
-    // console.log("job.empId: " + job.employerId);
+    //console.log("user.empId: " + user?.employerId);
+    //console.log("job.empId: " + job.employerId);
 
     return (
-        <article className={classes.job}>
-            <h2>{job.title}</h2>
-            <h3>{job.employerName}</h3>
-            <time>{job.postDate}</time>
-            <p>{job.description}</p>
+         <article className={classes.job}>
+            <h2>{job.data.title}</h2>
+            <h3>{job.data.employerName}</h3>
+            <time>{job.data.postDate}</time>
+            <p>{job.data.description}</p>
             <menu className={classes.actions}>
                 { 
-                  userRole === 'USER' && (
-                        <Link to={{ pathname: `/jobs/${job.id}/apply` }} state={{job}}>
-                            <CheckIcon />
-                        </Link>
-                    )
+                  userRoles === 'USER' && (
+                    <Link to={{ pathname: `/jobs/${job.data.id}/apply` }}>
+                        <CheckIcon />
+                    </Link>
+                  )
                 }
                 {
-                  userRole === 'EMPLOYER' && user?.employerId === job.employerId && (
+                  userRoles === 'EMPLOYER' && user?.employerId === job.data.employerId && (
                     <>
-                        <Link to={{ pathname: `/jobs/${job.id}/edit` }} state={{job}}>
-                                <EditIcon />
+                        <Link to={{ pathname: `/jobs/${job.data.id}/edit` }} state={{jobData}}>
+                            <EditIcon />
                         </Link>
-                        <Link to={{ pathname: `/jobs/${job.id}/delete` }}>
+                        <Link to={{ pathname: `/jobs/${job.data.id}/delete` }}>
                             <ClearIcon />
                         </Link>
                     </>
